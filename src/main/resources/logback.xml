@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="false">
+
+    <!-- ─── 1.  Properties you can override with env-vars ────────────────── -->
+    <!-- Overall minimum level: LOGGER_LEVELS_ROOT=DEBUG, INFO, WARN, ERROR -->
+    <property name="ROOT_LEVEL" value="${LOGGER_LEVELS_ROOT:-INFO}"/>
+
+    <!-- Your code’s package level: LOGGER_LEVELS_COM_CGTFARMER=DEBUG …      -->
+    <property name="APP_LEVEL"  value="${LOGGER_LEVELS_COM_CGTFARMER:-INFO}"/>
+
+    <!-- Micronaut puts AWSRequestId & friends in the MDC for every request  -->
+    <property name="MDC_KEYS"
+              value="rid:%X{AWSRequestId:- -} fn:%X{AWSFunctionName:- -}"/>
+
+    <!-- ─── 2.  Appender → stdout (picked up by CloudWatch) ──────────────── -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{ISO8601} %-5level %logger{36} [${MDC_KEYS}] – %msg%n%ex{full}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ─── 3.  Per-package loggers  ─────────────────────────────────────── -->
+    <logger name="io.micronaut.http" level="${LOGGER_LEVELS_IO_MICRONAUT_HTTP:-WARN}"/>
+    <logger name="com.cgtfarmer"      level="${APP_LEVEL}"/>
+
+    <!-- ─── 4.  Root logger  ─────────────────────────────────────────────── -->
+    <root level="${ROOT_LEVEL}">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

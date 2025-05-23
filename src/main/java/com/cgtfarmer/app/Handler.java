@@ -1,0 +1,54 @@
+package com.cgtfarmer.app;
+
+import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
+import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
+import io.micronaut.function.aws.MicronautRequestHandler;
+import jakarta.inject.Inject;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class Handler extends
+    MicronautRequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
+
+  @Inject
+  public MathService mathService;
+
+  @Override
+  public APIGatewayV2HTTPResponse execute(APIGatewayV2HTTPEvent event) {
+    String eventRouteKey = event.getRouteKey();
+
+    APIGatewayV2HTTPResponse response;
+
+    switch (eventRouteKey) {
+      case "GET /health":
+        response = APIGatewayV2HTTPResponse.builder()
+            .withStatusCode(200)
+            .withHeaders(Map.of("Content-Type", "application/json"))
+            .withBody("{ \"message\": \"Healthy\"}")
+            .build();
+
+        break;
+
+      case "POST /add":
+        int result = this.mathService.add(5, 2);
+
+        response = APIGatewayV2HTTPResponse.builder()
+            .withStatusCode(200)
+            .withHeaders(Map.of("Content-Type", "application/json"))
+            .withBody(String.format("{ \"result\": \"%d\"}", result))
+            .build();
+
+        break;
+
+      default:
+        response = APIGatewayV2HTTPResponse.builder()
+            .withStatusCode(400)
+            .withHeaders(Map.of("Content-Type", "text/plain"))
+            .withBody("{ \"error\": \"Unsupported route\"}")
+            .build();
+    }
+
+    return response;
+  }
+}

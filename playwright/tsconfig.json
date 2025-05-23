@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    // "module": "commonjs",
+    // "moduleResolution": "node",
+    "module": "Node16",
+    "moduleResolution": "node16",
+    "noEmit": false,
+    "preserveConstEnums": true,
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "strict": true,
+    "target": "es2020",
+    // "rootDir": "src",
+    "outDir": "dist",
+    "declaration": true,
+    "allowJs": true
+  },
+  "include": ["src/**/*", "playwright.config.ts"]
+}
