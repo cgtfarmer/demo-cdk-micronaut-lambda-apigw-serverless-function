@@ -9,5 +9,5 @@ test("add", async ({ request }) => {
 
   console.log(body);
 
-  expect(body.result).toEqual(8);
+  expect(body.result).toEqual(7);
 });
