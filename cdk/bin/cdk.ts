@@ -6,7 +6,7 @@ import { NetworkStack } from '../stacks/network-stack';
 import { AppStack } from '../stacks/app-stack';
 
 const cdkEnvironment: Environment = {
-  account: '024848454171',
+  account: '<AWS_ACCOUNT_ID>',
   region: 'us-east-1'
 };
 
