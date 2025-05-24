@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("non-existent route", async ({ request }) => {
+test("nonexistent route", async ({ request }) => {
   const response = await request.get("/does-not-exist");
 
   expect(response.status()).toEqual(404);

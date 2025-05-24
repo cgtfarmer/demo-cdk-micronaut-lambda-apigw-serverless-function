@@ -12,7 +12,7 @@ public class Handler extends
     MicronautRequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
 
   @Inject
-  public MathService mathService;
+  private MathService mathService;
 
   @Override
   public APIGatewayV2HTTPResponse execute(APIGatewayV2HTTPEvent event) {
@@ -22,6 +22,8 @@ public class Handler extends
 
     switch (eventRouteKey) {
       case "GET /health":
+        log.info("Health Endpoint");
+
         response = APIGatewayV2HTTPResponse.builder()
             .withStatusCode(200)
             .withHeaders(Map.of("Content-Type", "application/json"))
@@ -31,6 +33,7 @@ public class Handler extends
         break;
 
       case "POST /add":
+        log.info("Add Endpoint");
         int result = this.mathService.add(5, 2);
 
         response = APIGatewayV2HTTPResponse.builder()
@@ -42,10 +45,12 @@ public class Handler extends
         break;
 
       default:
+        log.info("404 Endpoint");
+
         response = APIGatewayV2HTTPResponse.builder()
-            .withStatusCode(400)
-            .withHeaders(Map.of("Content-Type", "text/plain"))
-            .withBody("{ \"error\": \"Unsupported route\"}")
+            .withStatusCode(404)
+            .withHeaders(Map.of("Content-Type", "application/json"))
+            .withBody("{ \"message\": \"Not Found\"}")
             .build();
     }
 

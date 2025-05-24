@@ -1,10 +1,5 @@
-import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.api.tasks.testing.TestDescriptor
-import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.gradle.jvm.tasks.Jar
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 // Usage: gradle build -PoutDir=/tmp
 val outDir: String? by project
@@ -16,24 +11,21 @@ outDir?.let {
 val tags: String? by project
 
 plugins {
-  java
+  id("io.micronaut.library") version "4.5.3"
   id("com.gradleup.shadow") version "8.3.6"
   id("com.diffplug.spotless") version "7.0.3"
-  id("io.micronaut.library") version "4.5.3"
 }
 
 group = "com.cgtfarmer"
 version = "0.0.1"
 
 tasks.named<Jar>("jar") {
-  archiveBaseName.set("app")
-  archiveVersion.set("0.0.1")
   enabled = false
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_21
-  targetCompatibility = JavaVersion.VERSION_21
+  sourceCompatibility = JavaVersion.toVersion("21")
+  targetCompatibility = JavaVersion.toVersion("21")
 }
 
 repositories {
@@ -41,36 +33,21 @@ repositories {
 }
 
 dependencies {
+  // General
   compileOnly("org.projectlombok:lombok:1.18.34")
   annotationProcessor("org.projectlombok:lombok:1.18.34")
-
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2")
-
-  testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-
   implementation("org.apache.commons:commons-lang3:3.14.0")
-  implementation("software.amazon.awssdk:s3:2.31.24")
+  runtimeOnly("org.yaml:snakeyaml")
 
-  implementation("com.amazonaws:aws-lambda-java-core:1.2.1")
-  implementation("com.amazonaws:aws-lambda-java-events:3.11.6")
-
-  implementation(platform("software.amazon.awssdk:bom:2.25.65"))
-  implementation("software.amazon.awssdk:dynamodb-enhanced")
-
-  // implementation("com.google.dagger:dagger:2.56.1")
-  // annotationProcessor("com.google.dagger:dagger-compiler:2.56.1")
-
+  // Micronaut
   annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
+  implementation("com.amazonaws:aws-lambda-java-events")
   implementation("io.micronaut.aws:micronaut-aws-apigateway")
   implementation("io.micronaut.aws:micronaut-aws-lambda-events-serde")
   implementation("io.micronaut.aws:micronaut-function-aws")
   implementation("io.micronaut.crac:micronaut-crac")
   implementation("io.micronaut.serde:micronaut-serde-jackson")
   runtimeOnly("ch.qos.logback:logback-classic")
-
-  runtimeOnly("org.yaml:snakeyaml")
 }
 
 micronaut {
@@ -166,12 +143,6 @@ tasks.withType<Test> {
 
   // Rerun tests even when files haven't changed
   outputs.upToDateWhen { false }
-}
-
-tasks.named<ShadowJar>("shadowJar") {
-  exclude("module-info.class")
-  exclude("META-INF/*")
-  exclude("META-INF/versions/**")
 }
 
 tasks.named("assemble") {
